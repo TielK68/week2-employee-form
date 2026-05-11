@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './EmployeeForm.css';
 
 function EmployeeForm() {
@@ -10,6 +10,16 @@ function EmployeeForm() {
     position: ''
   });
 
+  const [employees, setEmployees] = useState([]);
+
+  useEffect(() => {
+    const savedEmployees = JSON.parse(localStorage.getItem('employees'));
+
+    if (savedEmployees) {
+      setEmployees(savedEmployees);
+    }
+  }, []);
+
   const handleChange = (e) => {
     setEmployee({
       ...employee,
@@ -19,6 +29,20 @@ function EmployeeForm() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    const updatedEmployees = [...employees, employee];
+
+    setEmployees(updatedEmployees);
+    localStorage.setItem('employees', JSON.stringify(updatedEmployees));
+
+    setEmployee({
+      firstName: '',
+      lastName: '',
+      email: '',
+      department: '',
+      position: ''
+    });
+
     alert('Employee Submitted Successfully');
   };
 
@@ -69,6 +93,15 @@ function EmployeeForm() {
 
         <button type="submit">Submit Employee</button>
       </form>
+
+      <h3>Employee Data</h3>
+      <ul>
+        {employees.map((emp, index) => (
+          <li key={index}>
+            {emp.firstName} {emp.lastName} - {emp.email} - {emp.department} - {emp.position}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
